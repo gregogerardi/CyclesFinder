@@ -155,6 +155,7 @@ public class TestJohnson {
         assertTrue(leastScc.getVertices().contains(STRING_2));
         assertTrue(leastScc.getVertices().contains(STRING_4));
         assertEquals(3, leastScc.getVertexCount());
+
     }
 
     //Test used only to check memory usage
@@ -169,8 +170,8 @@ public class TestJohnson {
     public void testLargeGraph() throws JohnsonIllegalStateException {
         DirectedGraph<String, DummyEdge> dg = new DirectedSparseGraph<>();
         Random r = new Random();
-        int nodes = 10000;
-        int edges = 100000;
+        int nodes = 1000;
+        int edges = 1000;
         while (edges > 0) {
             String from = String.valueOf(r.nextInt(nodes) + 1);
             String to = String.valueOf(r.nextInt(nodes) + 1);
@@ -181,4 +182,5 @@ public class TestJohnson {
         }
         new Johnson(dg).findCircuits();
     }
+
 }

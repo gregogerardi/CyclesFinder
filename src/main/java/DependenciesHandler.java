@@ -1,24 +1,23 @@
+import edu.uci.ics.jung.graph.DirectedSparseGraph;
+import edu.uci.ics.jung.graph.Graph;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
+import utils.DummyEdge;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 //todo eliminar string hardcodeados
 public class DependenciesHandler extends DefaultHandler {
 
 
-    /*
-        boolean dNameSpace = false; // el paquete origen
-        boolean dType = false; // la clase que necesita la dependencia
-        boolean dDependsOn = false; // las clases de que dependo
-        */
     //todo chequear estructura de hashmap y si va de clase a paquete o viceversa
     private HashMap<String, String> classToPackage;
     private String packageName;
     private String className;
-    private Graph graph;
+    private Graph<String, DummyEdge> graph;
 
-    public DependenciesHandler(HashMap<String, String> classToPackage, Graph graph) {
+    DependenciesHandler(HashMap<String, String> classToPackage, Graph<String, DummyEdge> graph) {
         this.classToPackage = classToPackage;
         this.graph = graph;
     }
@@ -34,14 +33,25 @@ public class DependenciesHandler extends DefaultHandler {
             classToPackage.put(className, packageName);
         } else if (qName.equalsIgnoreCase("depends-on")) {
             String dependencieClass = attributes.getValue("name");
-            if (!graph.contains(dependencieClass)) {
-                graph.addNode(dependencieClass);
-            }
-            if (!graph.contains(className)) {
-                graph.addNode(className);
-            }
-            graph.addArc(className, dependencieClass);
+            graph.addEdge(new DummyEdge(), className, dependencieClass);
         }
+    }
+
+    DirectedSparseGraph<String, DummyEdge> getPackageGraph() {
+        DirectedSparseGraph<String, DummyEdge> packageGraph = new DirectedSparseGraph<>();
+        Collection<String> nodos = graph.getVertices();
+
+        for (String vertice : nodos) {
+            Collection<String> hijos = graph.getSuccessors(vertice);
+            for (String verticeHijo : hijos) {
+                String source = classToPackage.get(vertice);
+                String target = classToPackage.get(verticeHijo);
+                if (!(target == null)) // todo comentar que ignoramos todas las clases que no conocemos el paquete + las dependencias propias de java
+                    packageGraph.addEdge(new DummyEdge(), source, target);
+            }
+        }
+
+        return packageGraph;
     }
 
 }

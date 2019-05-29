@@ -10,10 +10,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Unit test the Tarjan algorithm.
- */
-
 public class TestTarjan {
 
     private static final String STRING_1 = "string1";
@@ -30,7 +26,7 @@ public class TestTarjan {
      */
 
     @Test
-    public void test1() {
+    public void testBinarySCC() {
         DirectedGraph<String, DummyEdge> dg = new DirectedSparseGraph<>();
         dg.addEdge(new DummyEdge(), STRING_1, STRING_2);
         dg.addEdge(new DummyEdge(), STRING_2, STRING_1);
@@ -46,7 +42,7 @@ public class TestTarjan {
      */
 
     @Test
-    public void test2() {
+    public void testSingleEdge() {
         DirectedGraph<String, DummyEdge> dg = new DirectedSparseGraph<>();
         dg.addEdge(new DummyEdge(), STRING_5, STRING_6);
         Tarjan<String, DummyEdge> t = new Tarjan<>(dg);
@@ -59,7 +55,7 @@ public class TestTarjan {
      */
 
     @Test
-    public void test3() {
+    public void test4NodesCycle() {
         DirectedGraph<String, DummyEdge> dg = new DirectedSparseGraph<>();
         dg.addEdge(new DummyEdge(), STRING_5, STRING_6);
         dg.addEdge(new DummyEdge(), STRING_6, STRING_7);
@@ -79,7 +75,7 @@ public class TestTarjan {
      */
 
     @Test
-    public void test4() {
+    public void test2BinarySCC() {
         DirectedGraph<String, DummyEdge> dg = new DirectedSparseGraph<>();
         dg.addEdge(new DummyEdge(), STRING_5, STRING_6);
         dg.addEdge(new DummyEdge(), STRING_6, STRING_5);

@@ -35,9 +35,8 @@ public class TestJohnson {
         dsg.addEdge(new DummyEdge(), STRING_3, STRING_1);
         dsg.addEdge(new DummyEdge(), STRING_3, STRING_2);
         dsg.addEdge(new DummyEdge(), STRING_2, STRING_3);
-        Johnson j = new Johnson(dsg);
-        j.findCircuits();
-        List<Stack<String>> circuits = j.getCircuits();
+        Johnson<String, DummyEdge> j = new Johnson<>(dsg);
+        List<List<String>> circuits = j.findCircuits();
         Stack<String> expected1 = new Stack<>();
         Stack<String> expected2 = new Stack<>();
         expected1.addAll(Arrays.asList(STRING_1, STRING_3));
@@ -61,13 +60,12 @@ public class TestJohnson {
         dsg.addEdge(new DummyEdge(), STRING_4, STRING_5);
         dsg.addEdge(new DummyEdge(), STRING_5, STRING_6);
         dsg.addEdge(new DummyEdge(), STRING_6, STRING_4);
-        Johnson j = new Johnson(dsg);
-        j.findCircuits();
+        Johnson<String, DummyEdge> j = new Johnson<>(dsg);
         Stack<String> expected1 = new Stack<>();
         Stack<String> expected2 = new Stack<>();
         expected1.addAll(Arrays.asList(STRING_1, STRING_2));
         expected2.addAll(Arrays.asList(STRING_4, STRING_5, STRING_6));
-        List<Stack<String>> circuits = j.getCircuits();
+        List<List<String>> circuits = j.findCircuits();
         assertSame(circuits.size(), 2);
         assertTrue(circuits.containsAll(Arrays.asList(expected1, expected2)));
     }
@@ -102,9 +100,8 @@ public class TestJohnson {
         dsg.addEdge(new DummyEdge(), STRING_1, STRING_2);
         dsg.addEdge(new DummyEdge(), STRING_3, STRING_2);
         dsg.addEdge(new DummyEdge(), STRING_3, STRING_1);
-        Johnson j = new Johnson(dsg);
-        j.findCircuits();
-        List<Stack<String>> circuits = j.getCircuits();
+        Johnson<String, DummyEdge> j = new Johnson<>(dsg);
+        List<List<String>> circuits = j.findCircuits();
         Stack<String> expected1 = new Stack<>();
         expected1.addAll(Arrays.asList(STRING_1, STRING_2));
         assertEquals(1, circuits.size());
@@ -125,9 +122,8 @@ public class TestJohnson {
         dsg.addEdge(new DummyEdge(), STRING_3, STRING_2);
         dsg.addEdge(new DummyEdge(), STRING_3, STRING_1);
         dsg.addEdge(new DummyEdge(), STRING_2, STRING_1);
-        Johnson j = new Johnson(dsg);
-        j.findCircuits();
-        List<Stack<String>> circuits = j.getCircuits();
+        Johnson<String, DummyEdge> j = new Johnson<>(dsg);
+        List<List<String>> circuits = j.findCircuits();
         Stack<String> expected1 = new Stack<>();
         Stack<String> expected2 = new Stack<>();
         expected1.addAll(Arrays.asList(STRING_1, STRING_3));
@@ -150,7 +146,7 @@ public class TestJohnson {
         dsg.addEdge(new DummyEdge(), STRING_2, STRING_3);
         dsg.addEdge(new DummyEdge(), STRING_2, STRING_4);
         dsg.addEdge(new DummyEdge(), STRING_4, STRING_2);
-        DirectedGraph<String, DummyEdge> leastScc = Johnson.leastSCC(dsg);
+        DirectedGraph<String, DummyEdge> leastScc = Johnson.minSCC(dsg);
         assertTrue(leastScc.getVertices().contains(STRING_1));
         assertTrue(leastScc.getVertices().contains(STRING_2));
         assertTrue(leastScc.getVertices().contains(STRING_4));
@@ -170,7 +166,7 @@ public class TestJohnson {
         DirectedGraph<String, DummyEdge> dg = new DirectedSparseGraph<>();
         Random r = new Random();
         int nodes = 10000;
-        int edges = 100000;
+        int edges = 10000;
         while (edges > 0) {
             String from = String.valueOf(r.nextInt(nodes) + 1);
             String to = String.valueOf(r.nextInt(nodes) + 1);

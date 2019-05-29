@@ -3,92 +3,118 @@ package johnson;
 import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import tarjan.Tarjan;
-import utils.DummyEdge;
 
 import java.util.*;
+import java.util.function.Predicate;
 
-//todo pasar a generics
-public class Johnson {
+import static java.util.Collections.min;
 
-    private Map<String, Boolean> blocked;
-    private Map<String, List<String>> blockedNodes;
-    private List<Stack<String>> circuits;
-    private DirectedGraph<String, DummyEdge> dg;
+public class Johnson<NodeType extends Comparable<? super NodeType>, EdgeType> {
 
-    public Johnson(DirectedGraph<String, DummyEdge> dg) {
+    private Map<NodeType, Boolean> blocked;
+    private Map<NodeType, List<NodeType>> blockedNodes;
+    private List<List<NodeType>> circuits;
+    private DirectedGraph<NodeType, EdgeType> dg;
+
+    public Johnson(DirectedGraph<NodeType, EdgeType> dg) {
         blocked = new HashMap<>();
         blockedNodes = new HashMap<>();
         circuits = new ArrayList<>();
         this.dg = dg;
     }
 
-    public static DirectedGraph<String, DummyEdge> leastSCC(DirectedGraph<String, DummyEdge> dg) throws JohnsonIllegalStateException {
-        Tarjan<String, DummyEdge> t = new Tarjan<>(dg);
-        List<List<String>> sccs = t.tarjan();
-        String min = null;
-        List<String> minScc = new ArrayList<>();
-        for (List<String> scc : sccs) {
-            if (scc.size() == 1) {
-                continue;
-            }
-            for (String i : scc) {
-                if (min == null) {
-                    min = i;
-                    minScc = scc;
-                } else if (i.compareTo(min) < 0) {
-                    minScc = scc;
-                    min = i;
+    public static <NodeType extends Comparable<? super NodeType>, EdgeType> DirectedGraph<NodeType, EdgeType> minSCC(DirectedGraph<NodeType, EdgeType> dg) throws JohnsonIllegalStateException {
+        Tarjan<NodeType, EdgeType> t = new Tarjan<>(dg);
+        List<List<NodeType>> sccs = t.tarjan();
+        List<NodeType> minScc = sccs.stream().filter(l -> l.size() > 1).reduce(Collections.emptyList(), (l1, l2) -> l1.isEmpty() || min(l2).compareTo(min(l1)) < 0 ? l2 : l1);
+
+        //version sin streams para seguimiento
+/*          NodeType min;
+            List<NodeType> minScc = Collections.emptyList();
+            if (sccs.size() != 0) {
+            min = min(sccs.get(0));
+            minScc = sccs.get(0);
+            for (List<NodeType> scc : sccs) {
+                if (scc.size() > 1) {
+                    NodeType localMin = min(scc);
+                    if (localMin.compareTo(min) < 0) {
+                        minScc = scc;
+                        min = localMin;
+                    }
                 }
-            }
-        }
+            }*/
         return addEdges(minScc, dg);
     }
 
-    private static DirectedGraph<String, DummyEdge> addEdges(List<String> list, DirectedGraph<String, DummyEdge> dg) throws JohnsonIllegalStateException {
-        if (list == null) {
+    //todo comentar que agrega los edges del grafo parametro al grafo resultado solo si sus nodos estan contenidos en list
+    private static <NodeType extends Comparable<? super NodeType>, EdgeType> DirectedGraph<NodeType, EdgeType> addEdges(List<NodeType> list, DirectedGraph<NodeType, EdgeType> dg) throws JohnsonIllegalStateException {
+        if (list == null || dg == null) {
             throw new JohnsonIllegalStateException();
         }
-        if (dg == null) {
-            throw new JohnsonIllegalStateException();
-        }
-        DirectedGraph<String, DummyEdge> result = new DirectedSparseGraph<>();
-        for (String i : list) {
-            for (DummyEdge edge : dg.getOutEdges(i)) {
-                String to = dg.getOpposite(i, edge);
+        DirectedGraph<NodeType, EdgeType> result = new DirectedSparseGraph<>();
+        list.forEach(i -> dg.getOutEdges(i).forEach(e -> {
+            NodeType to = dg.getOpposite(i, e);
+            if (list.contains(to)) result.addEdge(e, i, to);
+        }));
+
+        //antes de usar for each y Consumer
+       /* for (NodeType i : list) {
+            for (EdgeType edge : dg.getOutEdges(i)) {
+                NodeType to = dg.getOpposite(i, edge);
                 if (list.contains(to)) {
                     result.addEdge(edge, i, to);
                 }
             }
-        }
+        }*/
         return result;
     }
 
     //todo comentar que solo se queda con nodos que tengan arcos a otros nodos que tambien sean mayores a i, si quedan nodos aislados no los incluye
-    public static DirectedGraph<String, DummyEdge> subGraphFrom(String i, DirectedGraph<String, DummyEdge> in) {
-        DirectedGraph<String, DummyEdge> result = new DirectedSparseGraph<>();
-        for (String from : in.getVertices()) {
-            if (from.compareTo(i) > 0) {
-                for (String to : in.getSuccessors(from)) {
-                    if (to.compareTo(i) > 0) {
+    public static <NodeType extends Comparable<? super NodeType>, EdgeType> DirectedGraph<NodeType, EdgeType> subGraphFrom(NodeType i, DirectedGraph<NodeType, EdgeType> in) {
+        DirectedGraph<NodeType, EdgeType> result = new DirectedSparseGraph<>();
+
+        Predicate<NodeType> filter = node -> i == null || node.compareTo(i) > 0;
+        in.getVertices().stream().filter(filter).forEach(from -> in.getSuccessors(from).stream().filter(filter).forEach(to -> result.addEdge(in.findEdge(from, to), from, to)));
+
+        //antes de usar streams
+/*        for (NodeType from : in.getVertices()) {
+            if (i == null || from.compareTo(i) > 0) {
+                for (NodeType to : in.getSuccessors(from)) {
+                    if (i == null || to.compareTo(i) > 0) {
                         result.addEdge(in.findEdge(from, to), from, to);
                     }
                 }
             }
-        }
+        }*/
         return result;
     }
 
-    public void unblock(String u) {
+    private static <NodeType extends Comparable<? super NodeType>, EdgeType> NodeType minVertex(DirectedGraph<NodeType, EdgeType> in) {
+        return min(in.getVertices());
+/*
+        List<NodeType> minScc = sccs.stream().filter(l -> l.size() > 1).reduce(Collections.emptyList(), (l1, l2) -> l1.isEmpty() || min(l2).compareTo(min(l1)) < 0 ? l2 : l1);
+        List<NodeType> vertexs = new ArrayList<>(in.getVertices());
+        if (vertexs.isEmpty()) return null;
+        NodeType result = vertexs.get(0);
+        for (NodeType i : in.getVertices()) {
+            if (i.compareTo(result) < 0) {
+                result = i;
+            }
+            return result;
+        }*/
+    }
+
+    private void unblock(NodeType u) {
         blocked.put(u, false);
         while (blockedNodes.get(u).size() > 0) {
-            String w = blockedNodes.get(u).remove(0);
+            NodeType w = blockedNodes.get(u).remove(0);
             if (blocked.get(w)) {
                 unblock(w);
             }
         }
     }
 
-    public boolean circuit(DirectedGraph<String, DummyEdge> dg, String v, String s, Stack<String> stack) throws JohnsonIllegalStateException {
+    private boolean circuit(DirectedGraph<NodeType, EdgeType> dg, NodeType v, NodeType s, Stack<NodeType> stack) throws JohnsonIllegalStateException {
         if (dg == null) {
             throw new JohnsonIllegalStateException();
         }
@@ -98,9 +124,9 @@ public class Johnson {
         boolean f = false;
         stack.push(v);
         blocked.put(v, true);
-        for (String w : dg.getSuccessors(v)) {
+        for (NodeType w : dg.getSuccessors(v)) {
             if (w.equals(s)) {
-                this.circuits.add((Stack<String>) stack.clone());
+                this.circuits.add((Stack<NodeType>) stack.clone());
                 f = true;
             } else {
                 if (!blocked.get(w)) {
@@ -110,52 +136,40 @@ public class Johnson {
                 }
             }
         }
-        if (f) {
-            unblock(v);
-        } else {
-            for (String w : dg.getSuccessors(v)) {
+        if (f) unblock(v);
+        else
+            dg.getSuccessors(v).stream().filter(w -> blockedNodes.get(w).contains(v)).forEach(w -> blockedNodes.get(w).add(v));
+           /* {for (NodeType w : dg.getSuccessors(v)) {
                 if (!blockedNodes.get(w).contains(v)) {
                     blockedNodes.get(w).add(v);
                 }
             }
-        }
+        }*/
         stack.pop();
         return f;
     }
 
-    public String leastVertex(DirectedGraph<String, DummyEdge> in) {
-        //todo use streams
-        List<String> vertexs = new ArrayList<>(in.getVertices());
-        if (vertexs.isEmpty()) return null;
-        String result = vertexs.get(0);
-        for (String i : in.getVertices()) {
-            if (i.compareTo(result) < 0) {
-                result = i;
-            }
-        }
-        return result;
-    }
-
-    public void findCircuits() throws JohnsonIllegalStateException {
+    public List<List<NodeType>> findCircuits() throws JohnsonIllegalStateException {
         blocked = new HashMap<>();
         blockedNodes = new HashMap<>();
-        Stack<String> stack = new Stack<>();
-        String min = "";
-        DirectedGraph<String, DummyEdge> subGraph = subGraphFrom(min, dg);
-        DirectedGraph<String, DummyEdge> leastScc = leastSCC(subGraph);
-        while (leastScc.getVertices().size() > 0) {
-            min = leastVertex(leastScc);
-            for (String i : leastScc.getVertices()) {
+        Stack<NodeType> stack = new Stack<>();
+        NodeType min = null;
+        DirectedGraph<NodeType, EdgeType> subGraph = subGraphFrom(min, dg);
+        DirectedGraph<NodeType, EdgeType> minScc = minSCC(subGraph);
+        while (minScc.getVertices().size() > 0) {
+            min = minVertex(minScc);
+            minScc.getVertices().forEach(i -> {
                 blocked.put(i, false);
                 blockedNodes.put(i, new ArrayList<>());
-            }
-            circuit(leastScc, min, min, stack);
+            });
+          /*  for (NodeType i : minScc.getVertices()) {
+                blocked.put(i, false);
+                blockedNodes.put(i, new ArrayList<>());
+            }*/
+            circuit(minScc, min, min, stack);
             subGraph = subGraphFrom(min, dg);
-            leastScc = leastSCC(subGraph);
+            minScc = minSCC(subGraph);
         }
-    }
-
-    public List<Stack<String>> getCircuits() {
         return circuits;
     }
 

@@ -23,11 +23,11 @@ import java.util.*;
 
 public class Tarjan<NodeType, EdgeType> {
 
-    int index;
-    DirectedGraph<NodeType, EdgeType> dg;
-    Stack<NodeType> stack;
-    Map<NodeType, Integer> indexMap;
-    Map<NodeType, Integer> lowLinkMap;
+    private int index;
+    private DirectedGraph<NodeType, EdgeType> dg;
+    private Stack<NodeType> stack;
+    private Map<NodeType, Integer> indexMap;
+    private Map<NodeType, Integer> lowLinkMap;
 
     public Tarjan(DirectedGraph<NodeType, EdgeType> dg) {
         this.index = 0;
@@ -40,21 +40,26 @@ public class Tarjan<NodeType, EdgeType> {
         this.index = 0;
         stack = new Stack<>();
         List<List<NodeType>> result = new ArrayList<>();
-        for (NodeType v : this.dg.getVertices()) {
+        dg.getVertices().forEach(v -> {
             if (indexMap.get(v) == null) {
                 result.addAll(this.strongConnect(v));
             }
-        }
+        });
+        /*for (NodeType v : this.dg.getVertices()) {
+            if (indexMap.get(v) == null) {
+                result.addAll(this.strongConnect(v));
+            }
+        }*/
         return result;
     }
 
-    public List<List<NodeType>> strongConnect(NodeType v) {
+    private List<List<NodeType>> strongConnect(NodeType v) {
         indexMap.put(v, index);
         lowLinkMap.put(v, index);
         index++;
         stack.push(v);
         List<List<NodeType>> result = new ArrayList<>();
-        for (NodeType w : dg.getSuccessors(v)) {
+        dg.getSuccessors(v).forEach(w -> {
             if (indexMap.get(w) == null) {
                 result.addAll(strongConnect(w));
                 lowLinkMap.put(v, Math.min(lowLinkMap.get(v), lowLinkMap.get(w)));
@@ -63,16 +68,14 @@ public class Tarjan<NodeType, EdgeType> {
                     lowLinkMap.put(v, Math.min(lowLinkMap.get(v), indexMap.get(w)));
                 }
             }
-        }
+        });
 
         if (lowLinkMap.get(v).equals(indexMap.get(v))) {
             List<NodeType> sccList = new ArrayList<>();
             while (true) {
                 NodeType w = stack.pop();
                 sccList.add(w);
-                if (w.equals(v)) {
-                    break;
-                }
+                if (w.equals(v)) break;
             }
             if (sccList.size() > 1) {
                 result.add(sccList);
@@ -80,7 +83,6 @@ public class Tarjan<NodeType, EdgeType> {
         }
         return result;
     }
-
 }
 
 /*

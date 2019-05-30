@@ -23,38 +23,28 @@ class Printer {
             dos.close();
         }
 
-        int num = 1;
-        circuits.forEach(strings -> printFormato1(strings, dos, num));
+        circuits.forEach(strings -> printFormato1(strings, dos));
         dos.close();
     }
 
-    private void printFormato1(List<String> strings, DataOutputStream dos, int num) {
-        try {
-            dos.writeChar(num);
-            dos.writeChar(')');
-            dos.writeChar(' ');
-            strings.forEach(palabra -> printFormato2(strings, dos, num));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void printFormato1(List<String> strings, DataOutputStream dos) {
+        strings.forEach(palabra -> printFormato2(strings, dos));
 
     }
 
-    private void printFormato2(List<String> strings, DataOutputStream dos, int num) {
-        for (int i = 0; i < strings.size(); i++) {
-            try {
+    private void printFormato2(List<String> strings, DataOutputStream dos) {
+        try {
+            for (int i = 0; i < strings.size(); i++) {
+
                 printTerminal(strings.get(i), dos);
                 if ((i + 1) != strings.get(i).length()) {
-                    dos.writeChar(' ');
-                    dos.writeChar('-');
-                    dos.writeChar('>');
-                    dos.writeChar(' ');
+                    dos.writeChar(';');
                 }
-                num++;
-                dos.writeChar('\n');
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+            dos.writeChar('\n');
+            dos.writeChar('\n');
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

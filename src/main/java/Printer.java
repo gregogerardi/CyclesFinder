@@ -3,6 +3,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 class Printer {
 
@@ -19,23 +20,7 @@ class Printer {
         FileWriter fw = new FileWriter(path);
         BufferedWriter bw = new BufferedWriter(fw);
         PrintWriter pw = new PrintWriter(bw);
-
-        elements.forEach(l -> pw.println(String.join(";", l.iterator())));
-
-        elements.forEach(list -> {
-            list.stream().map(w -> new StringBuilder(w.toString()).append(';')).forEach(w -> w.chars().forEach(c -> {
-                try {
-                    dos.writeChar(c);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }));
-            try {
-                dos.writeChar('\n');
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-        dos.close();
+        elements.forEach(l -> pw.println(l.stream().map(Object::toString).collect(Collectors.joining(";"))));
+        bw.close();
     }
 }

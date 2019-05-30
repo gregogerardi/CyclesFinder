@@ -23,9 +23,9 @@ public class TestJohnson {
     private static final String STRING_4 = "string4";
     private static final String STRING_5 = "string5";
     private static final String STRING_6 = "string6";
-    private static final int NUMBER_OF_TESTS = 1;
-    private static final int MAX_NODES = 10;
-    private static final int MAX_EDGES = 50;
+    private static final int NUMBER_OF_TESTS = 5;
+    private static final int NUMBER_OF_NODES = 30;
+    private static final int NUMBER_OF_EDGES = 250;
 
     /**
      * Test for detection of two binary cycles.
@@ -58,20 +58,20 @@ public class TestJohnson {
 
     @Test
     public void testJohnson1TernaryCycle() throws JohnsonIllegalStateException {
-        DirectedGraph<String, DummyEdge> dsg = new DirectedSparseGraph<>();
-        dsg.addEdge(new DummyEdge(), STRING_1, STRING_2);
-        dsg.addEdge(new DummyEdge(), STRING_2, STRING_1);
-        dsg.addEdge(new DummyEdge(), STRING_2, STRING_3);
-        dsg.addEdge(new DummyEdge(), STRING_4, STRING_5);
-        dsg.addEdge(new DummyEdge(), STRING_5, STRING_6);
-        dsg.addEdge(new DummyEdge(), STRING_6, STRING_4);
+        DirectedGraph<String, DummyEdge> dg = new DirectedSparseGraph<>();
+        dg.addEdge(new DummyEdge(), STRING_1, STRING_2);
+        dg.addEdge(new DummyEdge(), STRING_2, STRING_1);
+        dg.addEdge(new DummyEdge(), STRING_2, STRING_3);
+        dg.addEdge(new DummyEdge(), STRING_4, STRING_5);
+        dg.addEdge(new DummyEdge(), STRING_5, STRING_6);
+        dg.addEdge(new DummyEdge(), STRING_6, STRING_4);
         Johnson<String, DummyEdge> j = new Johnson<>();
         Stack<String> expected1 = new Stack<>();
         Stack<String> expected2 = new Stack<>();
         expected1.addAll(Arrays.asList(STRING_1, STRING_2));
         expected2.addAll(Arrays.asList(STRING_4, STRING_5, STRING_6));
-        List<List<String>> circuits = j.findCircuits(dsg, NO_MIN_LIMIT, NO_MAX_LIMIT);
-        assertSame(circuits.size(), 2);
+        List<List<String>> circuits = j.findCircuits(dg, NO_MIN_LIMIT, NO_MAX_LIMIT);
+        assertSame(2, circuits.size());
         assertTrue(circuits.containsAll(Arrays.asList(expected1, expected2)));
     }
 
@@ -163,14 +163,16 @@ public class TestJohnson {
      *
      * @throws JohnsonIllegalStateException
      */
+
+    //this test could take a while for a dense graph
     @Test
     public void testMinLimit() throws JohnsonIllegalStateException {
         int MAX_MINIMUN = NUMBER_OF_TESTS;
         for (int i = 0; i < MAX_MINIMUN; i++) {
             DirectedGraph<String, DummyEdge> dg = new DirectedSparseGraph<>();
             Random r = new Random();
-            int nodes = 30;
-            int edges = 200;
+            int nodes = NUMBER_OF_NODES;
+            int edges = NUMBER_OF_EDGES;
             while (edges > 0) {
                 String from = String.valueOf(r.nextInt(nodes) + 1);
                 String to = String.valueOf(r.nextInt(nodes) + 1);
@@ -190,15 +192,19 @@ public class TestJohnson {
 
     /**
      * Test for random graph with a maximun length for the circuits
+     *
+     * @throws JohnsonIllegalStateException
      */
+
+    //this test could take a while for a dense graph
     @Test
     public void testMaxLimit() throws JohnsonIllegalStateException {
         int MAX_MAXIMUN = NUMBER_OF_TESTS;
         for (int i = 1; i <= MAX_MAXIMUN; i++) {
             DirectedGraph<String, DummyEdge> dg = new DirectedSparseGraph<>();
             Random r = new Random();
-            int nodes = r.nextInt(MAX_NODES) + 1;
-            int edges = r.nextInt(MAX_EDGES) + 1;
+            int nodes = NUMBER_OF_NODES;
+            int edges = NUMBER_OF_EDGES;
             while (edges > 0) {
                 String from = String.valueOf(r.nextInt(nodes) + 1);
                 String to = String.valueOf(r.nextInt(nodes) + 1);

@@ -30,7 +30,7 @@ public class TestTarjan {
         DirectedGraph<String, DummyEdge> dg = new DirectedSparseGraph<>();
         dg.addEdge(new DummyEdge(), STRING_1, STRING_2);
         dg.addEdge(new DummyEdge(), STRING_2, STRING_1);
-        Tarjan<String, DummyEdge> t = new Tarjan<>(dg, 1);
+        Tarjan<String, DummyEdge> t = new Tarjan<>(dg);
         List<List<String>> sccs = t.tarjan();
         assertEquals(1, sccs.size());
         assertTrue(sccs.get(0).contains(STRING_1));
@@ -45,7 +45,7 @@ public class TestTarjan {
     public void testSingleEdge() {
         DirectedGraph<String, DummyEdge> dg = new DirectedSparseGraph<>();
         dg.addEdge(new DummyEdge(), STRING_5, STRING_6);
-        Tarjan<String, DummyEdge> t = new Tarjan<>(dg, 1);
+        Tarjan<String, DummyEdge> t = new Tarjan<>(dg);
         List<List<String>> sccs = t.tarjan();
         assertEquals(0, sccs.size());
     }
@@ -61,7 +61,7 @@ public class TestTarjan {
         dg.addEdge(new DummyEdge(), STRING_6, STRING_7);
         dg.addEdge(new DummyEdge(), STRING_7, STRING_8);
         dg.addEdge(new DummyEdge(), STRING_8, STRING_5);
-        Tarjan<String, DummyEdge> t = new Tarjan<>(dg, 1);
+        Tarjan<String, DummyEdge> t = new Tarjan<>(dg);
         List<List<String>> sccs = t.tarjan();
         assertEquals(1, sccs.size());
         assertTrue(sccs.get(0).contains(STRING_5));
@@ -81,7 +81,7 @@ public class TestTarjan {
         dg.addEdge(new DummyEdge(), STRING_6, STRING_5);
         dg.addEdge(new DummyEdge(), STRING_7, STRING_8);
         dg.addEdge(new DummyEdge(), STRING_8, STRING_7);
-        Tarjan<String, DummyEdge> t = new Tarjan<>(dg, 1);
+        Tarjan<String, DummyEdge> t = new Tarjan<>(dg);
         List<List<String>> sccs = t.tarjan();
         assertEquals(2, sccs.size());
         assertTrue(sccs.get(1).contains(STRING_5));
@@ -108,7 +108,7 @@ public class TestTarjan {
         // (specifically the call to strongConnect(STRING_1)) and the actual component is added to
         // the components list at a "lower-level" call to strongConnect()
 
-        Tarjan<String, DummyEdge> tarjan = new Tarjan<>(dg, 1);
+        Tarjan<String, DummyEdge> tarjan = new Tarjan<>(dg);
         List<List<String>> sccs = tarjan.tarjan();
         assertEquals(1, sccs.size());
         assertTrue(sccs.get(0).contains(STRING_2));

@@ -34,10 +34,11 @@ public class Main {
             saxParser.parse(inputFile, userhandler);
 
             DirectedGraph<String, DummyEdge> packages = userhandler.getPackageGraph();
-            Johnson<String, DummyEdge> johnson = new Johnson<>(packages);
-            List<List<String>> circuits = johnson.findCircuits(); //todo chequear por que se cuelga
-
-
+            Johnson<String, DummyEdge> johnson = new Johnson<>();
+            long startTime = System.currentTimeMillis();
+            List<List<String>> circuits = johnson.findCircuits(packages, 3, Integer.parseInt(args[1]));
+            long elapsedTime = System.currentTimeMillis() - startTime;
+            System.out.println(elapsedTime);
             Printer.print(circuits, args[2]);
 
         } catch (IOException | SAXException | ParserConfigurationException | Johnson.JohnsonIllegalStateException e) {

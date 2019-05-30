@@ -24,16 +24,18 @@ import java.util.*;
 public class Tarjan<NodeType, EdgeType> {
 
     private int index;
+    private int minSCCSize;
     private DirectedGraph<NodeType, EdgeType> dg;
     private Stack<NodeType> stack;
     private Map<NodeType, Integer> indexMap;
     private Map<NodeType, Integer> lowLinkMap;
 
-    public Tarjan(DirectedGraph<NodeType, EdgeType> dg) {
+    public Tarjan(DirectedGraph<NodeType, EdgeType> dg, int minSCCSize) {
         this.index = 0;
         this.dg = dg;
         this.indexMap = new HashMap<>();
         this.lowLinkMap = new HashMap<>();
+        this.minSCCSize = minSCCSize;
     }
 
     public List<List<NodeType>> tarjan() {
@@ -77,7 +79,7 @@ public class Tarjan<NodeType, EdgeType> {
                 sccList.add(w);
                 if (w.equals(v)) break;
             }
-            if (sccList.size() > 1) {
+            if (sccList.size() > minSCCSize) {
                 result.add(sccList);
             } // don't return trivial sccs in the form of single nodes.
         }

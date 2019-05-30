@@ -121,7 +121,7 @@ public class TestJohnson {
      */
 
     @Test
-    public void testJohnson1Binary1ternarySameNodes() throws JohnsonIllegalStateException {
+    public void testJohnson1Binary1ternary() throws JohnsonIllegalStateException {
         DirectedGraph<String, DummyEdge> dsg = new DirectedSparseGraph<>();
         dsg.addEdge(new DummyEdge(), STRING_1, STRING_3);
         dsg.addEdge(new DummyEdge(), STRING_3, STRING_2);

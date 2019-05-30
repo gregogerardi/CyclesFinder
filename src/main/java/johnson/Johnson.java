@@ -9,6 +9,14 @@ import java.util.function.Predicate;
 
 import static java.util.Collections.min;
 
+/**
+ * Implementation of Johnson Algorithm. @See <a href="https://epubs.siam.org/doi/abs/10.1137/0204007?journalCode=smjcat">Finding All the Elementary Circuits of a Directed Grap</a>
+ * for a description of the algorithm (also available on <a href="https://www.cs.tufts.edu/comp/150GA/homeworks/hw1/Johnson%2075.PDF">Johnson Algorithm</a>)
+ *
+ * @param <NodeType> the type used as vertex. Should implement {@link Comparable}
+ * @param <EdgeType> the type used as edge
+ */
+
 public class Johnson<NodeType extends Comparable<? super NodeType>, EdgeType> {
 
     public final static int NO_MIN_LIMIT = -1;
@@ -19,10 +27,21 @@ public class Johnson<NodeType extends Comparable<? super NodeType>, EdgeType> {
     private int minCircuit;
     private int maxCircuit;
 
-    //todo comentar que no devolvemos los SCC de menos de minCircuit nodos porque nunca podran tener un ciclo de minCircuit nodos o mas
+    /**
+     * Method for returning the minimun Strongly Connected Component of a given {@link edu.uci.ics.jung.graph.Graph}.
+     * The minimun SCC is the one who has the smallest {@link NodeType}.
+     *
+     * @param dg         the {@link DirectedGraph} to search in for
+     * @param minCircuit the minimum length expected for the SCC. We use this to avoid SCCs of least than this amount of vertex.
+     *                   This kind of SCC can´t contain circuits of more than minCircuit length a so tey are useless to the algorithm
+     * @param <NodeType> the type used as vertex. Should implement {@link Comparable}
+     * @param <EdgeType> the type used as edge
+     * @return a {@link DirectedGraph} to representing the SCC
+     * @throws JohnsonIllegalStateException
+     */
+
     public static <NodeType extends Comparable<? super NodeType>, EdgeType> DirectedGraph<NodeType, EdgeType> minSCC(DirectedGraph<NodeType, EdgeType> dg, int minCircuit) throws JohnsonIllegalStateException {
-        Tarjan<NodeType, EdgeType> t = new Tarjan<>(dg);
-        List<List<NodeType>> sccs = t.tarjan();
+        List<List<NodeType>> sccs = Tarjan.tarjan(dg);
         List<NodeType> minScc = sccs.stream().filter(l -> l.size() >= minCircuit).reduce(Collections.emptyList(), (l1, l2) -> l1.isEmpty() || min(l2).compareTo(min(l1)) < 0 ? l2 : l1);
 
         //version sin streams para seguimiento

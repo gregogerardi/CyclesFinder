@@ -39,7 +39,9 @@ public class Main {
             List<List<String>> circuits = johnson.findCircuits(packages, 3, Integer.parseInt(args[1]));
             long elapsedTime = System.currentTimeMillis() - startTime;
             System.out.println(elapsedTime);
-            Printer.print(circuits, args[2]);
+
+            Printer printer = new Printer();
+            printer.print(circuits, args[2]);
 
         } catch (IOException | SAXException | ParserConfigurationException | Johnson.JohnsonIllegalStateException e) {
             e.printStackTrace();

@@ -22,6 +22,11 @@ public class DependenciesHandler extends DefaultHandler {
         this.graph = graph;
     }
 
+    /**
+     * Recorrido por el xml, capturando las clases necesarias para armar un grafo entre estas
+     * Se almacena en un HashMap el paquete del que proviene cada clase
+     */
+
     @Override
     public void startElement(String uri,
                              String localName, String qName, Attributes attributes) {
@@ -36,6 +41,12 @@ public class DependenciesHandler extends DefaultHandler {
             graph.addEdge(new DummyEdge(), className, dependencieClass);
         }
     }
+
+    /**
+     * Busqueda de vertices y arcos entre los distintos paquetes, a partir del grafo de clases
+     *
+     * @return grafo dirigido con las dependencias entre los paquetes, obviando los que no conocemos desde el xml
+     */
 
     DirectedSparseGraph<String, DummyEdge> getPackageGraph() {
         DirectedSparseGraph<String, DummyEdge> packageGraph = new DirectedSparseGraph<>();

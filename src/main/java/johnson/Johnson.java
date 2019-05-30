@@ -21,7 +21,7 @@ public class Johnson<NodeType extends Comparable<? super NodeType>, EdgeType> {
 
     //todo comentar que no devolvemos los SCC de menos de minCircuit nodos porque nunca podran tener un ciclo de minCircuit nodos o mas
     public static <NodeType extends Comparable<? super NodeType>, EdgeType> DirectedGraph<NodeType, EdgeType> minSCC(DirectedGraph<NodeType, EdgeType> dg, int minCircuit) throws JohnsonIllegalStateException {
-        Tarjan<NodeType, EdgeType> t = new Tarjan<>(dg, minCircuit);
+        Tarjan<NodeType, EdgeType> t = new Tarjan<>(dg);
         List<List<NodeType>> sccs = t.tarjan();
         List<NodeType> minScc = sccs.stream().filter(l -> l.size() >= minCircuit).reduce(Collections.emptyList(), (l1, l2) -> l1.isEmpty() || min(l2).compareTo(min(l1)) < 0 ? l2 : l1);
 
@@ -155,9 +155,9 @@ public class Johnson<NodeType extends Comparable<? super NodeType>, EdgeType> {
         blocked = new HashMap<>();
         blockedNodes = new HashMap<>();
         Stack<NodeType> stack = new Stack<>();
-        NodeType min = null;
-        DirectedGraph<NodeType, EdgeType> subGraph = subGraphFrom(min, dg);
-        DirectedGraph<NodeType, EdgeType> minScc = minSCC(subGraph, minCircuit);
+        NodeType min;
+        DirectedGraph<NodeType, EdgeType> subGraph;
+        DirectedGraph<NodeType, EdgeType> minScc = minSCC(dg, minCircuit);
         while (minScc.getVertices().size() > 0) {
             min = minVertex(minScc);
             minScc.getVertices().forEach(i -> {

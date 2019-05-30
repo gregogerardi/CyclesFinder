@@ -7,11 +7,11 @@ import java.util.*;
 
 /**
  * From Wikipedia @See <a href="https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm">Finding All the SCC</a>:
- * <p>
+ *
  * algorithm tarjan is
  * input: graph G = (V, E)
  * output: set of strongly connected components (sets of vertices)
- * <p>
+ *
  * index := 0
  * S := empty stack
  * for each v in V do
@@ -19,7 +19,7 @@ import java.util.*;
  * strongconnect(v)
  * end if
  * end for
- * <p>
+ *
  * function strongconnect(v)
  * // Set the depth index for v to the smallest unused index
  * v.index := index
@@ -27,7 +27,7 @@ import java.util.*;
  * index := index + 1
  * S.push(v)
  * v.onStack := true
- * <p>
+ *
  * // Consider successors of v
  * for each (v, w) in E do
  * if (w.index is undefined) then
@@ -54,8 +54,8 @@ import java.util.*;
  * output the current strongly connected component
  * end if
  * end function
- * <p>
- * <p>
+ *
+ *
  * The index variable is the depth-first search node number counter. S is the node stack, which starts out empty and stores
  * the history of nodes explored but not yet committed to a strongly connected component. Note that this is not the normal
  * depth-first search stack, as nodes are not popped as the search returns up the tree; they are only popped when an entire
@@ -68,11 +68,11 @@ import java.util.*;
  * v.lowlink := min(v.lowlink, w.index) is the correct way to update v.lowlink if w is on stack. Because w is on the stack
  * already, (v, w) is a back-edge in the DFS tree and therefore w is not in the subtree of v. Because v.lowlink takes into
  * account nodes reachable only through the nodes in the subtree of v we must stop at w and use w.index instead of w.lowlink.
- * <p>
+ *
  * Time Complexity: The Tarjan procedure is called once for each node; the for all statement considers each edge at most once.
  * The algorithm's running time is therefore linear in the number of edges and nodes in G, i.e. O(|V|+|E|)
  * In order to achieve this complexity, the test for whether w is on the stack should be done in constant time.
- * <p>
+ *
  * Space Complexity: The Tarjan procedure requires supplementary data per vertex for the index, lowlink and onStack fields.
  * The worst-case size of the stack S must be |V| (i.e. when the graph is one giant component). This gives a final analysis of O(|V|)).
  **/

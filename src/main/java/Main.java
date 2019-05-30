@@ -36,13 +36,13 @@ public class Main {
             DirectedGraph<String, DummyEdge> packages = userhandler.getPackageGraph();
             Johnson<String, DummyEdge> johnson = new Johnson<>();
             long startTime = System.currentTimeMillis();
-            List<List<String>> circuits = johnson.findCircuits(packages, 3, Integer.parseInt(args[1]));
+            List<List<String>> circuits = johnson.findCircuits(packages, 3, 7);
             long elapsedTime = System.currentTimeMillis() - startTime;
-            System.out.println(elapsedTime);
-
-            Printer printer = new Printer();
-            printer.print(circuits, args[2]);
-
+            System.out.println(elapsedTime / 1000f);
+            startTime = System.currentTimeMillis();
+            Printer.print(circuits, args[2]);
+            elapsedTime = System.currentTimeMillis() - startTime;
+            System.out.println(elapsedTime / 1000f);
         } catch (IOException | SAXException | ParserConfigurationException | Johnson.JohnsonIllegalStateException e) {
             e.printStackTrace();
         }

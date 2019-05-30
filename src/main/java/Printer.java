@@ -1,57 +1,41 @@
-import java.io.DataOutputStream;
-import java.io.FileOutputStream;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 class Printer {
 
     /**
-     * Volcado en archivos los ciclos encontrados mediante [Johnson]
+     * Volcado en archivo de una {@link List} de {@link List}s de elementos
+     * En caso de que no haya elementos se genera un archivo vacio
      *
-     * @param circuits de listas, que es el formato devuelto por [findCircuits()]
-     * @param path     absoluta donde se creara el archivo con los ciclos
+     * @param elements es la listas de listas conteniendo los elementos a imprimir
+     * @param path     ruta absoluta donde se creara el archivo con la informacion impresa
      */
 
-    void print(List<List<String>> circuits, String path) throws IOException {
+    static void print(List<? extends List<?>> elements, String path) throws IOException {
 
-        FileOutputStream fos = new FileOutputStream(path);
-        DataOutputStream dos = new DataOutputStream(fos);
+        FileWriter fw = new FileWriter(path);
+        BufferedWriter bw = new BufferedWriter(fw);
+        PrintWriter pw = new PrintWriter(bw);
 
-        if (circuits.size() == 0) {
-            byte disernible = 0;
-            dos.writeChar(disernible);
-            dos.close();
-        }
+        elements.forEach(l -> pw.println(String.join(";", l.iterator())));
 
-        circuits.forEach(strings -> printFormato1(strings, dos));
+        elements.forEach(list -> {
+            list.stream().map(w -> new StringBuilder(w.toString()).append(';')).forEach(w -> w.chars().forEach(c -> {
+                try {
+                    dos.writeChar(c);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }));
+            try {
+                dos.writeChar('\n');
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
         dos.close();
     }
-
-    private void printFormato1(List<String> strings, DataOutputStream dos) {
-        strings.forEach(palabra -> printFormato2(strings, dos));
-
-    }
-
-    private void printFormato2(List<String> strings, DataOutputStream dos) {
-        try {
-            for (int i = 0; i < strings.size(); i++) {
-
-                printTerminal(strings.get(i), dos);
-                if ((i + 1) != strings.get(i).length()) {
-                    dos.writeChar(';');
-                }
-            }
-            dos.writeChar('\n');
-            dos.writeChar('\n');
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void printTerminal(String palabra, DataOutputStream dos) throws IOException {
-        for (int i = 0; i < palabra.length(); i++) {
-            dos.writeChar(palabra.charAt(i));
-        }
-    }
-
 }

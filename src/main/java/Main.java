@@ -2,7 +2,9 @@ import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import johnson.Johnson;
 import org.xml.sax.SAXException;
+import utils.DependenciesHandler;
 import utils.DummyEdge;
+import utils.Printer;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;

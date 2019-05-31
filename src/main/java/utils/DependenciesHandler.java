@@ -1,8 +1,9 @@
+package utils;
+
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
-import utils.DummyEdge;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,7 +18,7 @@ public class DependenciesHandler extends DefaultHandler {
     private String className;
     private Graph<String, DummyEdge> graph;
 
-    DependenciesHandler(HashMap<String, String> classToPackage, Graph<String, DummyEdge> graph) {
+    public DependenciesHandler(HashMap<String, String> classToPackage, Graph<String, DummyEdge> graph) {
         this.classToPackage = classToPackage;
         this.graph = graph;
     }
@@ -48,7 +49,7 @@ public class DependenciesHandler extends DefaultHandler {
      * @return grafo dirigido con las dependencias entre los paquetes, obviando los que no conocemos desde el xml
      */
 
-    DirectedSparseGraph<String, DummyEdge> getPackageGraph() {
+    public DirectedSparseGraph<String, DummyEdge> getPackageGraph() {
         DirectedSparseGraph<String, DummyEdge> packageGraph = new DirectedSparseGraph<>();
         Collection<String> nodos = graph.getVertices();
 

@@ -1,3 +1,5 @@
+package utils;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -5,7 +7,7 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class Printer {
+public class Printer {
 
     /**
      * Volcado en archivo de una {@link List} de {@link List}s de elementos
@@ -15,8 +17,7 @@ class Printer {
      * @param path     ruta absoluta donde se creara el archivo con la informacion impresa
      */
 
-    static void print(List<? extends List<?>> elements, String path) throws IOException {
-
+    public static void print(List<? extends List<?>> elements, String path) throws IOException {
         FileWriter fw = new FileWriter(path);
         BufferedWriter bw = new BufferedWriter(fw);
         PrintWriter pw = new PrintWriter(bw);

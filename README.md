@@ -14,7 +14,7 @@ Marcos, Roberto David [roberto.dmarcos@hotmail.com]
 
 ------------
 
-Para encontrar los ciclos en lso grafos incluimos dos estrategias distintas, cada una de las cuales será mas o menos eficiente dependiendo de la configuracion del grafo en el que buscar dependencias. 
+Para encontrar los ciclos en un grafo incluimos dos estrategias distintas, cada una de las cuales será mas o menos eficiente dependiendo de la configuracion del grafo en el que buscar dependencias. 
 
 Para grafos pequeños (aproximadamente menos de 80 arcos) se recomienda utilizar el algoritmo de Jonhson. 
 En cambio para grafos extensos se recomienda el uso de DFS: sets black-grey-white

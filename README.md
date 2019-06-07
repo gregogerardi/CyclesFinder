@@ -41,5 +41,5 @@ Se entrega tambien una clase a modo de Benchmark que permite encontrar la curva 
 las clases java cuentan con documentación javaDoc correspondiente cuando se concidero necesaria, los pseudocodigos de los algoritmos o referencias a donde fueron consultados, y clases de Test para las clases implementantes de los algoritmos.
 
 -------------
-##BONUS TRACK 
+## BONUS TRACK 
 Para averiguar si algun ciclo pasa por dos vertices dados, la clase CycleInDirectedGraph dispone de un metodo findCycleThrough a tal fin, y en la carpeta de test se comprueba su funcionalidad.

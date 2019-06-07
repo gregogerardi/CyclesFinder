@@ -15,6 +15,12 @@ import static java.util.Collections.min;
  * for a description and the pseudocode followed here of the algorithm (also available on <a href="https://www.cs.tufts.edu/comp/150GA/homeworks/hw1/Johnson%2075.PDF">Johnson Algorithm</a>)
  **/
 
+/*
+    la complejidad temporal del algoritmo expresada en la pubnlicación es de O((n+e)c). En la publicacion no concideran el tiempo
+    de guardar cada ciclo encontrado, que es de O(largo del ciclo) = en el peor caso O(n) y ocurre una vez por cada ciclo encontrado
+    dando una complejidad resultante de O((n+e)cn) o O(cn^2+cne). En el peor caso (grafo totalmente conexo) e=n^2 dando
+    O(cn^2+cn^3)= O(cn^3)
+ */
 public class Johnson {
 
     public final static int NO_MIN_LIMIT = -1;

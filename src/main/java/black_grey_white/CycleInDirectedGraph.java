@@ -86,7 +86,8 @@ para encontrar todos los ciclos dado un largo maximo y uno minimo
    la complejidad temporal resultante es: por cada Nodo N, se recorren todos los vecino menos los ya recorridos
    (Maximo de N vecinos menos el actual) recursivamente (O(N!) con una profundidad maxima de max (O(N*(N-1)*(N-2)*...*(N-max))
    o O(N^max)) y en los casos donde se encuentre un ciclo se debe copiar el stack actual de circuito (de largo maximo = min(N,max)).
-   Resulta en O(N*N^max*min(N,max))= O(N^max).
+   Resulta en O(N*N^max*max)= O(N^max). En un caso sin maximo, el maximo nunca sera mas largo que el total de nodos N
+   Resultando en O(N^N)
 
 
    para saber si algun ciclo pasa por dos vertices, utilizamos una version modificada del algoritmo anterior, que incluye

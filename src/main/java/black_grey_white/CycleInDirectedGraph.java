@@ -180,7 +180,7 @@ public class CycleInDirectedGraph {
         }
         if (isClosed || currentCycle.size() == 1) {
             //uncoment next line to show a progress percentage by the console
-            System.out.println(100 * blackSet.size() / (whiteSet.size() + graySet.size() + blackSet.size()) + "%");
+            //System.out.println(100 * blackSet.size() / (whiteSet.size() + graySet.size() + blackSet.size()) + "%");
             moveVertex(current, graySet, blackSet);
         } else {
             moveVertex(current, graySet, whiteSet);

@@ -1,16 +1,17 @@
 package tarjan;
 
-import edu.uci.ics.jung.graph.DirectedGraph;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
+import graph.DirectedGraph;
+import graph.Vertex;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import utils.DummyEdge;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TestTarjan {
+@DisplayName("Tests for class Tarjan")
+class TestTarjan {
 
     private static final String STRING_1 = "string1";
     private static final String STRING_2 = "string2";
@@ -24,91 +25,84 @@ public class TestTarjan {
     /**
      * Test for a binary strongly connected component.
      */
-
     @Test
-    public void testBinarySCC() {
-        DirectedGraph<String, DummyEdge> dg = new DirectedSparseGraph<>();
-        dg.addEdge(new DummyEdge(), STRING_1, STRING_2);
-        dg.addEdge(new DummyEdge(), STRING_2, STRING_1);
-        List<List<String>> sccs = Tarjan.tarjan(dg);
+    void testBinarySCC() {
+        DirectedGraph<String> dg = new DirectedGraph<>();
+        dg.addEdge(STRING_1, STRING_2);
+        dg.addEdge(STRING_2, STRING_1);
+        List<List<Vertex<String>>> sccs = Tarjan.tarjan(dg);
         assertEquals(1, sccs.size());
-        assertTrue(sccs.get(0).contains(STRING_1));
-        assertTrue(sccs.get(0).contains(STRING_2));
+        assertTrue(sccs.get(0).contains(new Vertex<>(STRING_1)));
+        assertTrue(sccs.get(0).contains(new Vertex<>(STRING_2)));
     }
 
     /**
      * This test asserts that a graph with a sinlge edge does not contain strongly connected components.
      */
-
     @Test
-    public void testSingleEdge() {
-        DirectedGraph<String, DummyEdge> dg = new DirectedSparseGraph<>();
-        dg.addEdge(new DummyEdge(), STRING_5, STRING_6);
-        List<List<String>> sccs = Tarjan.tarjan(dg);
+    void testSingleEdge() {
+        DirectedGraph<String> dg = new DirectedGraph<>();
+        dg.addEdge(STRING_5, STRING_6);
+        List<List<Vertex<String>>> sccs = Tarjan.tarjan(dg);
         assertEquals(0, sccs.size());
     }
 
     /**
      * Test for discovery of a strongly connected component with 4 nodes (a cycle).
      */
-
     @Test
-    public void test4NodesCycle() {
-        DirectedGraph<String, DummyEdge> dg = new DirectedSparseGraph<>();
-        dg.addEdge(new DummyEdge(), STRING_5, STRING_6);
-        dg.addEdge(new DummyEdge(), STRING_6, STRING_7);
-        dg.addEdge(new DummyEdge(), STRING_7, STRING_8);
-        dg.addEdge(new DummyEdge(), STRING_8, STRING_5);
-        List<List<String>> sccs = Tarjan.tarjan(dg);
+    void test4NodesCycle() {
+        DirectedGraph<String> dg = new DirectedGraph<>();
+        dg.addEdge(STRING_5, STRING_6);
+        dg.addEdge(STRING_6, STRING_7);
+        dg.addEdge(STRING_7, STRING_8);
+        dg.addEdge(STRING_8, STRING_5);
+        List<List<Vertex<String>>> sccs = Tarjan.tarjan(dg);
         assertEquals(1, sccs.size());
-        assertTrue(sccs.get(0).contains(STRING_5));
-        assertTrue(sccs.get(0).contains(STRING_6));
-        assertTrue(sccs.get(0).contains(STRING_7));
-        assertTrue(sccs.get(0).contains(STRING_8));
+        assertTrue(sccs.get(0).contains(new Vertex<>(STRING_5)));
+        assertTrue(sccs.get(0).contains(new Vertex<>(STRING_6)));
+        assertTrue(sccs.get(0).contains(new Vertex<>(STRING_7)));
+        assertTrue(sccs.get(0).contains(new Vertex<>(STRING_8)));
     }
 
     /**
      * Test for discovery of two binary strongly connected components.
      */
-
     @Test
-    public void test2BinarySCC() {
-        DirectedGraph<String, DummyEdge> dg = new DirectedSparseGraph<>();
-        dg.addEdge(new DummyEdge(), STRING_5, STRING_6);
-        dg.addEdge(new DummyEdge(), STRING_6, STRING_5);
-        dg.addEdge(new DummyEdge(), STRING_7, STRING_8);
-        dg.addEdge(new DummyEdge(), STRING_8, STRING_7);
-        List<List<String>> sccs = Tarjan.tarjan(dg);
+    void test2BinarySCC() {
+        DirectedGraph<String> dg = new DirectedGraph<>();
+        dg.addEdge(STRING_5, STRING_6);
+        dg.addEdge(STRING_6, STRING_5);
+        dg.addEdge(STRING_7, STRING_8);
+        dg.addEdge(STRING_8, STRING_7);
+        List<List<Vertex<String>>> sccs = Tarjan.tarjan(dg);
         assertEquals(2, sccs.size());
-        assertTrue(sccs.get(1).contains(STRING_5));
-        assertTrue(sccs.get(1).contains(STRING_6));
-        assertTrue(sccs.get(0).contains(STRING_7));
-        assertTrue(sccs.get(0).contains(STRING_8));
+        assertTrue(sccs.get(1).contains(new Vertex<>(STRING_5)));
+        assertTrue(sccs.get(1).contains(new Vertex<>(STRING_6)));
+        assertTrue(sccs.get(0).contains(new Vertex<>(STRING_7)));
+        assertTrue(sccs.get(0).contains(new Vertex<>(STRING_8)));
     }
 
-    /*
-     *	Test for discovering lower level Strongly Connected Components
+    /**
+     * Test for discovering lower level Strongly Connected Components
      */
-
     @Test
-    public void testLowerLevelComponents() {
-        DirectedGraph<String, DummyEdge> dg = new DirectedSparseGraph<>();
-        dg.addEdge(new DummyEdge(), STRING_1, STRING_2);
-        dg.addEdge(new DummyEdge(), STRING_2, STRING_3);
-        dg.addEdge(new DummyEdge(), STRING_2, STRING_4);
-        dg.addEdge(new DummyEdge(), STRING_3, STRING_2);
-        dg.addEdge(new DummyEdge(), STRING_3, STRING_4);
-        dg.addEdge(new DummyEdge(), STRING_4, STRING_3);
-
+    void testLowerLevelComponents() {
+        DirectedGraph<String> dg = new DirectedGraph<>();
+        dg.addEdge(STRING_1, STRING_2);
+        dg.addEdge(STRING_2, STRING_3);
+        dg.addEdge(STRING_2, STRING_4);
+        dg.addEdge(STRING_3, STRING_2);
+        dg.addEdge(STRING_3, STRING_4);
+        dg.addEdge(STRING_4, STRING_3);
         // for this graph, all nodes are discovered in one "top-level" strongConnect() call
         // (specifically the call to strongConnect(STRING_1)) and the actual component is added to
         // the components list at a "lower-level" call to strongConnect()
-
-        List<List<String>> sccs = Tarjan.tarjan(dg);
+        List<List<Vertex<String>>> sccs = Tarjan.tarjan(dg);
         assertEquals(1, sccs.size());
-        assertTrue(sccs.get(0).contains(STRING_2));
-        assertTrue(sccs.get(0).contains(STRING_3));
-        assertTrue(sccs.get(0).contains(STRING_4));
+        assertTrue(sccs.get(0).contains(new Vertex<>(STRING_2)));
+        assertTrue(sccs.get(0).contains(new Vertex<>(STRING_3)));
+        assertTrue(sccs.get(0).contains(new Vertex<>(STRING_4)));
     }
 
 }

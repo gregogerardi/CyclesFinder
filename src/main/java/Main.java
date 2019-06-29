@@ -13,7 +13,10 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Main {
+
     private static final int MIN = 3;
+    private static HashMap<String,Short> stringToShort = new HashMap<>(); //todo inicializo aca?
+    private static HashMap<Short,String> shortToString =  new HashMap<>(); //todo inicializo aca?
 
     /**
      * @param args args[0] : el path del xml de entrada
@@ -37,8 +40,10 @@ public class Main {
             File inputFile = new File(args[0]);
             DependenciesHandler userhandler = new DependenciesHandler(classToPackage, classGraph);
             saxParser.parse(inputFile, userhandler);
-            DirectedGraph<String> packages = userhandler.getPackageGraph();
-            List<List<String>> circuits;
+
+            DirectedGraph<Short> packages = userhandler.getPackageGraph(stringToShort,shortToString);
+            List<List<Short>> circuits;
+
             boolean johnson;
             if (args.length == 4) {
                 System.out.println("Criterio de seleccion de algoritmo predefinido: para grafos de menos de 80 arcos, o mayores de 80 arcos pero con longitudes de circuito mayores a 15 se utiliza Johnson, en otro caso DFS");
@@ -57,7 +62,7 @@ public class Main {
                 System.out.println("Usando DFS");
                 circuits = CycleInDirectedGraph.findCycles(packages, Integer.valueOf(args[1]), MIN);
             }
-            Printer.printCircuits(circuits, args[2]);
+            Printer.printCircuits(circuits, args[2],shortToString);
             Printer.printTable(circuits, args[3]);
         } catch (ParserConfigurationException | Johnson.JohnsonIllegalStateException | IOException | org.xml.sax.SAXException e) {
             e.printStackTrace();

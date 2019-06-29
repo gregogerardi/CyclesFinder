@@ -15,6 +15,8 @@ public class DependenciesHandler extends DefaultHandler {
     private String className;
     private DirectedGraph<String> graph;
 
+    private static Short shortReference = 0;
+
     public DependenciesHandler(HashMap<String, String> classToPackage, DirectedGraph<String> graph) {
         this.classToPackage = classToPackage;
         this.graph = graph;
@@ -46,7 +48,7 @@ public class DependenciesHandler extends DefaultHandler {
      * @return grafo dirigido con las dependencias entre los paquetes, obviando los que no conocemos desde el xml
      */
 
-    public DirectedGraph<String> getPackageGraph() {
+    public DirectedGraph<Short> getPackageGraph(HashMap<String,Short> stringToShort, HashMap<Short,String> shortToString) {
         DirectedGraph<String> packageGraph = new DirectedGraph<>();
         Collection<Vertex<String>> nodos = graph.getAllVertex();
         nodos.forEach(vertice -> vertice.getAdjacentVertexes().forEach(verticeHijo -> {
@@ -55,6 +57,32 @@ public class DependenciesHandler extends DefaultHandler {
             if (target != null && source != null && !target.equals(source))
                 packageGraph.addEdge(source, target);
         }));
-        return packageGraph;
+
+        DirectedGraph<Short> packageGraphShort = new DirectedGraph<>();
+        nodos.forEach(vertice -> vertice.getAdjacentVertexes().forEach(verticeHijo -> {
+            String source = classToPackage.get(vertice.getData());
+            String target = classToPackage.get(verticeHijo.getData());
+            if(!(stringToShort.containsKey(source))) {
+                stringToShort.put(source, shortReference);
+                shortToString.put(shortReference,source);
+                shortReference++;
+            }
+            if(!(stringToShort.containsKey(target))){
+                stringToShort.put(target,shortReference);
+                shortToString.put(shortReference,target);
+                shortReference++;
+            }
+            Short sourceShort = stringToShort.get(source);
+            Short targetShort = stringToShort.get(target);
+
+            if (targetShort != null && sourceShort != null && !targetShort.equals(sourceShort))
+                packageGraphShort.addEdge(sourceShort, targetShort);
+        }));
+
+
+
+
+
+        return packageGraphShort;
     }
 }

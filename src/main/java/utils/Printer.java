@@ -18,11 +18,11 @@ public class Printer {
      * @param circuitsPath ruta absoluta donde se creara el archivo con la informacion impresa de las listas
      */
 
-    public static void printCircuits(List<? extends List<?>> elements, String circuitsPath) throws IOException {
+    public static void printCircuits(List<? extends List<?>> elements, String circuitsPath,HashMap<Short,String> shortToString) throws IOException {
         new Thread(() -> {
             try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(circuitsPath)))
             ) {
-                elements.forEach(l -> pw.println(l.stream().map(Object::toString).collect(Collectors.joining(";"))));
+                elements.forEach(l -> pw.println(l.stream().map(shortToString::get).collect(Collectors.joining(";"))));
             } catch (IOException e) {
                 e.printStackTrace();
             }

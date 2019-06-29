@@ -227,7 +227,7 @@ public class CycleInDirectedGraph {
                     localResult.trimToSize();
                     Collections.reverse(localResult);
                     rotateUntilMinFirst(localResult);
-                    reciver.newCycle(localResult);
+                    reciver.newCycle(localResult.stream().map(Vertex::getData).collect(toList()));
                 }
                 isClosed = false;
                 continue;

@@ -1,4 +1,5 @@
-3=169
-4=630
-5=2660
-6=10673
+Cantidad de paquetes en el ciclo -> cantidad de ciclos
+
+3 -> 3245
+4 -> 2713
+5 -> 2585

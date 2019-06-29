@@ -10,6 +10,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.min;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Implementation of Johnson Algorithm. @See <a href="https://epubs.siam.org/doi/abs/10.1137/0204007?journalCode=smjcat">Finding All the Elementary Circuits of a Directed Grap</a>
@@ -135,7 +136,7 @@ public class Johnson {
         for (Vertex<NodeType> w : v.getAdjacentVertexes()) {
             if (w.equals(s)) {
                 if (stack.size() >= minCircuit && stack.size() <= maxCircuit) {
-                    reciver.newCycle(new ArrayList<>(stack));
+                    reciver.newCycle(new ArrayList<>(stack).stream().map(Vertex::getData).collect(toList()));
                 }
                 f = true;
             } else {

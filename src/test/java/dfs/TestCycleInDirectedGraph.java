@@ -1,4 +1,4 @@
-package black_grey_white;
+package dfs;
 
 import graph.DirectedGraph;
 import org.junit.jupiter.api.DisplayName;
@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
-import static black_grey_white.CycleInDirectedGraph.NO_MAX;
-import static black_grey_white.CycleInDirectedGraph.NO_MIN;
+import static dfs.CycleInDirectedGraph.NO_MAX;
+import static dfs.CycleInDirectedGraph.NO_MIN;
 import static org.junit.jupiter.api.Assertions.*;
 import static utils.Utils.compareCircuitsLists;
 

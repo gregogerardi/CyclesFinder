@@ -3,6 +3,7 @@ package johnson;
 import graph.DirectedGraph;
 import graph.Vertex;
 import tarjan.Tarjan;
+import utils.Reciver;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -121,8 +122,43 @@ public class Johnson {
         return f;
     }
 
+    private static <NodeType extends Comparable<? super NodeType>> boolean circuit(DirectedGraph<NodeType> dg, Vertex<NodeType> v, Vertex<NodeType> s, List<Vertex<NodeType>> stack, Map<Vertex<NodeType>, Boolean> blocked, Map<Vertex<NodeType>, List<Vertex<NodeType>>> blockedNodes, int minCircuit, int maxCircuit, Reciver reciver) throws JohnsonIllegalStateException {
+        if (dg == null) {
+            throw new JohnsonIllegalStateException();
+        }
+        if (dg.getAllVertex().size() == 0) {
+            return false;
+        }
+        boolean f = false;
+        stack.add(v);
+        blocked.put(v, true);
+        for (Vertex<NodeType> w : v.getAdjacentVertexes()) {
+            if (w.equals(s)) {
+                if (stack.size() >= minCircuit && stack.size() <= maxCircuit) {
+                    reciver.newCycle(new ArrayList<>(stack));
+                }
+                f = true;
+            } else {
+                if (!blocked.get(w)) {
+                    if (circuit(dg, w, s, stack, blocked, blockedNodes, minCircuit, maxCircuit,reciver)) {
+                        f = true;
+                    }
+                }
+            }
+        }
+        if (f) unblock(v, blocked, blockedNodes);
+        else
+            v.getAdjacentVertexes().stream().filter(w -> !blockedNodes.get(w).contains(v)).forEach(w -> blockedNodes.get(w).add(v));
+        stack.remove(stack.size() - 1);
+        return f;
+    }
+
     public static <NodeType extends Comparable<? super NodeType>> List<List<NodeType>> findCircuits(DirectedGraph<NodeType> dg) throws JohnsonIllegalStateException {
         return findCircuits(dg, NO_MIN_LIMIT, NO_MAX_LIMIT);
+    }
+
+    public static <NodeType extends Comparable<? super NodeType>> void findCircuits(DirectedGraph<NodeType> dg, Reciver reciver) throws JohnsonIllegalStateException {
+        findCircuits(dg, NO_MIN_LIMIT, NO_MAX_LIMIT, reciver);
     }
 
     public static <NodeType extends Comparable<? super NodeType>> List<List<NodeType>> findCircuits(DirectedGraph<NodeType> dg, int minCircuit, int maxCircuit) throws JohnsonIllegalStateException {
@@ -144,6 +180,25 @@ public class Johnson {
             minScc = minSCC(subGraph, minCircuit);
         }
         return circuits.stream().map(l -> l.stream().map(Vertex::getData).collect(Collectors.toList())).collect(Collectors.toList());
+    }
+
+    public static <NodeType extends Comparable<? super NodeType>> void findCircuits(DirectedGraph<NodeType> dg, int minCircuit, int maxCircuit, Reciver reciver) throws JohnsonIllegalStateException {
+        Map<Vertex<NodeType>, Boolean> blocked = new HashMap<>(dg.getAllVertex().size() * 2);
+        Map<Vertex<NodeType>, List<Vertex<NodeType>>> blockedNodes = new HashMap<>(dg.getAllVertex().size() * 2);
+        List<Vertex<NodeType>> stack = new ArrayList<>();
+        Vertex<NodeType> min;
+        DirectedGraph<NodeType> subGraph;
+        DirectedGraph<NodeType> minScc = minSCC(dg, minCircuit);
+        while (minScc.getAllVertex().size() > 0) {
+            min = minVertex(minScc);
+            minScc.getAllVertex().forEach(i -> {
+                blocked.put(i, false);
+                blockedNodes.put(i, new ArrayList<>());
+            });
+            circuit(minScc, min, min, stack, blocked, blockedNodes, minCircuit, maxCircuit, reciver);
+            subGraph = subGraphFrom(min, dg);
+            minScc = minSCC(subGraph, minCircuit);
+        }
     }
 
     public static class JohnsonIllegalStateException extends Throwable {

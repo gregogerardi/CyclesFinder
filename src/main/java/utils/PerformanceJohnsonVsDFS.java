@@ -1,6 +1,6 @@
 package utils;
 
-import black_grey_white.CycleInDirectedGraph;
+import dfs.CycleInDirectedGraph;
 import graph.DirectedGraph;
 import johnson.Johnson;
 

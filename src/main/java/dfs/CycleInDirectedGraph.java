@@ -1,7 +1,8 @@
-package black_grey_white;
+package dfs;
 
 import graph.DirectedGraph;
 import graph.Vertex;
+import utils.Reciver;
 
 import java.util.*;
 
@@ -120,6 +121,10 @@ public class CycleInDirectedGraph {
         return findCycles(graph, NO_MAX, NO_MIN);
     }
 
+    public static <T extends Comparable<? super T>> void findCycles(DirectedGraph<T> graph, Reciver reciver) {
+        findCycles(graph, reciver, NO_MAX, NO_MIN);
+    }
+
     /**
      * Metodo para allar todos los ciclos en un grafo teniendo en cuenta longitudes minimas y maximas para el mismo.
      * Tener en cuenta que para longitudes maximas altas la cantidad de niveles de la recursion de este algoritmo es alta.
@@ -144,6 +149,17 @@ public class CycleInDirectedGraph {
             CycleInDirectedGraph.findCycles(current, whiteSet, graySet, blackSet, currentCycle, results, max, min);
         }
         return results.stream().map(list -> list.stream().map(Vertex::getData).collect(toList())).collect(toList());
+    }
+
+    public static <T extends Comparable<? super T>> void findCycles(DirectedGraph<T> graph, Reciver reciver, int max, int min) {
+        Set<Vertex<T>> whiteSet = new HashSet<>(graph.getAllVertex());
+        Set<Vertex<T>> graySet = new HashSet<>(graph.getAllVertex().size());
+        Set<Vertex<T>> blackSet = new HashSet<>(graph.getAllVertex().size() * 2);
+        List<Vertex<T>> currentCycle = new ArrayList<>();
+        while (!whiteSet.isEmpty()) {
+            Vertex<T> current = whiteSet.iterator().next();
+            CycleInDirectedGraph.findCycles(current, whiteSet, graySet, blackSet, currentCycle, max, min, reciver);
+        }
     }
 
     private static <T extends Comparable<? super T>> boolean findCycles(Vertex<T> current, Set<Vertex<T>> whiteSet,
@@ -175,6 +191,49 @@ public class CycleInDirectedGraph {
             }
             if (!blackSet.contains(neighbor)) {
                 boolean closeChilds = findCycles(neighbor, whiteSet, graySet, blackSet, currentCycle, results, max, min);
+                isClosed = isClosed && closeChilds;
+            }
+        }
+        if (isClosed || currentCycle.size() == 1) {
+            //uncoment next line to show a progress percentage by the console
+            //System.out.println(100 * blackSet.size() / (whiteSet.size() + graySet.size() + blackSet.size()) + "%");
+            moveVertex(current, graySet, blackSet);
+        } else {
+            moveVertex(current, graySet, whiteSet);
+        }
+        currentCycle.remove(currentCycle.size() - 1);
+        return isClosed;
+    }
+
+    private static <T extends Comparable<? super T>> boolean findCycles(Vertex<T> current, Set<Vertex<T>> whiteSet,
+                                                                        Set<Vertex<T>> graySet, Set<Vertex<T>> blackSet, List<Vertex<T>> currentCycle, int max, int min, Reciver reciver) {
+        if (currentCycle.size() >= max) {
+            return false;
+        }
+        moveVertex(current, whiteSet, graySet);
+        currentCycle.add(current);
+        boolean isClosed = true;
+        for (Vertex<T> neighbor : current.getAdjacentVertexes()) {
+            if (graySet.contains(neighbor)) {
+                int i = currentCycle.size() - 1;
+                ArrayList<Vertex<T>> localResult = new ArrayList<>(currentCycle.size());
+                Vertex<T> localVertex;
+                do {
+                    localVertex = currentCycle.get(i);
+                    localResult.add(localVertex);
+                    i--;
+                } while (localVertex != neighbor);
+                if (localResult.size() >= min) {
+                    localResult.trimToSize();
+                    Collections.reverse(localResult);
+                    rotateUntilMinFirst(localResult);
+                    reciver.newCycle(localResult);
+                }
+                isClosed = false;
+                continue;
+            }
+            if (!blackSet.contains(neighbor)) {
+                boolean closeChilds = findCycles(neighbor, whiteSet, graySet, blackSet, currentCycle, max, min, reciver);
                 isClosed = isClosed && closeChilds;
             }
         }

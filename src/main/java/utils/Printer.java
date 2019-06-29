@@ -8,44 +8,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Printer {
+public class Printer implements Reciver {
 
-    /**
-     * Volcado en archivo de una {@link List} de {@link List}s de elementos
-     * En caso de que no haya elementos se genera un archivo vacio
-     *
-     * @param elements     es la listas de listas conteniendo los elementos a imprimir
-     * @param circuitsPath ruta absoluta donde se creara el archivo con la informacion impresa de las listas
-     */
+    private HashMap<Integer, Integer> largeToCount = new HashMap<>();
+    private String circuitsTable;
+    private PrintWriter printWriter;
 
-    public static void printCircuits(List<? extends List<?>> elements, String circuitsPath) throws IOException {
-        new Thread(() -> {
-            try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(circuitsPath)))
-            ) {
-                elements.forEach(l -> pw.println(l.stream().map(Object::toString).collect(Collectors.joining(";"))));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
+    @Override
+    public <T> void newCycle(List<T> newCycle) {
+        printWriter.println(newCycle.stream().map(Object::toString).collect(Collectors.joining(";")));
+        largeToCount.put(newCycle.size(), largeToCount.containsKey(newCycle.size()) ? (largeToCount.get(newCycle.size()) + 1) : 1);
     }
 
-    /**
-     * Volcado en archivo de las cantidades de elementos contenidos en cada lista
-     * En caso de que no haya elementos se genera un archivo vacio
-     *
-     * @param elements  {@link List} de {@link List}s de elementos a contar ocurrencias
-     * @param tablePath ruta absoluta donde se creara el archivo con la tabla impresa de las listas
-     */
-    public static void printTable(List<? extends List<?>> elements, String tablePath) throws IOException {
-        new Thread(() -> {
-            HashMap<Integer, Integer> largeToCount = new HashMap<>();
-            elements.forEach(l -> largeToCount.put(l.size(), largeToCount.containsKey(l.size()) ? (largeToCount.get(l.size()) + 1) : 1));
-            try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(tablePath)))
-            ) {
-                largeToCount.entrySet().forEach(pw::println);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
+    public Printer(String circuitsPath, String circuitsTable) {
+        this.circuitsTable = circuitsTable;
+        try {
+            this.printWriter = new PrintWriter(new BufferedWriter(new FileWriter(circuitsPath)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void printTable() {
+        try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(circuitsTable)))
+        ) {
+            largeToCount.entrySet().forEach(pw::println);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

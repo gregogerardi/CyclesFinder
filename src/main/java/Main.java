@@ -1,4 +1,4 @@
-import black_grey_white.CycleInDirectedGraph;
+import dfs.CycleInDirectedGraph;
 import graph.DirectedGraph;
 import johnson.Johnson;
 import utils.DependenciesHandler;
@@ -38,8 +38,8 @@ public class Main {
             DependenciesHandler userhandler = new DependenciesHandler(classToPackage, classGraph);
             saxParser.parse(inputFile, userhandler);
             DirectedGraph<String> packages = userhandler.getPackageGraph();
-            List<List<String>> circuits;
             boolean johnson;
+            Printer printer = new Printer(args[2],args[3]);
             if (args.length == 4) {
                 System.out.println("Criterio de seleccion de algoritmo predefinido: para grafos de menos de 80 arcos, o mayores de 80 arcos pero con longitudes de circuito mayores a 15 se utiliza Johnson, en otro caso DFS");
                 johnson = packages.getAllEdges().size() < 80 || Integer.valueOf(args[1]) > 15;
@@ -51,14 +51,12 @@ public class Main {
             }
             if (johnson) {
                 System.out.println("Usando Johnson");
-                Johnson j = new Johnson();
-                circuits = Johnson.findCircuits(packages, MIN, Integer.valueOf(args[1]));
+               Johnson.findCircuits(packages, MIN, Integer.valueOf(args[1]),printer);
             } else {
                 System.out.println("Usando DFS");
-                circuits = CycleInDirectedGraph.findCycles(packages, Integer.valueOf(args[1]), MIN);
+               CycleInDirectedGraph.findCycles(packages, printer, Integer.valueOf(args[1]), MIN);
             }
-            Printer.printCircuits(circuits, args[2]);
-            Printer.printTable(circuits, args[3]);
+            printer.printTable();
         } catch (ParserConfigurationException | Johnson.JohnsonIllegalStateException | IOException | org.xml.sax.SAXException e) {
             e.printStackTrace();
         }

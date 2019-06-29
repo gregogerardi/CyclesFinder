@@ -27,6 +27,12 @@ public class Main {
      */
 
     public static void main(String[] args) {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        long init = System.currentTimeMillis();
         DirectedGraph<String> classGraph = new DirectedGraph<>();
         HashMap<String, String> classToPackage = new HashMap<>();
         try {
@@ -41,7 +47,8 @@ public class Main {
             DependenciesHandler userhandler = new DependenciesHandler(classToPackage, classGraph);
             saxParser.parse(inputFile, userhandler);
             DirectedGraph<Short> packages = userhandler.getPackageGraph(stringToShort,shortToString);
-            List<List<Short>> circuits;
+            System.out.println("Cantidad de vertices: "+packages.getAllVertex().size());
+            System.out.println("Cantidad de arcos: "+packages.getAllEdges().size());
             boolean johnson;
             Printer printer = new Printer(args[2],args[3],shortToString);
             if (args.length == 4) {
@@ -65,5 +72,8 @@ public class Main {
         } catch (ParserConfigurationException | Johnson.JohnsonIllegalStateException | IOException | org.xml.sax.SAXException e) {
             e.printStackTrace();
         }
+        long time = System.currentTimeMillis();
+        System.out.println(time);
+        System.out.println(time-init);
     }
 }

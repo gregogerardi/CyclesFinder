@@ -18,6 +18,16 @@ La ejecucion del .jar debe seguir la siguiente estructura: java -jar nombreDelEj
 
 Donde nombreDelEjecutable es el nombre del .jar, rutaDelXml es la ruta donde se encuentra el archivo con las dependencias a analizar, maxNumeroDeCiclos es la cantidad máxima de ciclos que se desea analizar (como mínimo 3), rutaSalida1 es la ruta donde se almacenara el archivo de salida con todos los ciclos encontrados, rutaSalida2 es la ruta donde se almacenara el archivo de salida con la cantidad de ciclos para cada longitud analizada, y AlgoritmoAEjecutar da la posibilidad de elegir el algoritmo a utilizar.
 
+Dentro del repositorio se adjuntan 3 imágenes de tablas analizando composición de los archivos de entrada (cantidad de vértices y nodos generados en el grafo de cada uno), tiempo y ram ocupados en la ejecución de cada entrada con distintos largos de ciclo máximos.
+
+La carpeta Análisis incluye 3 imagenes:
+
+Tabla de tiempos: se realizaron pruebas en una maquina Desktop con un procesador Intel i5 8400 corriendo Windows 10 de 64 bits y 16 gb de ram disponibles. La tabla incluye el archivo de entrada utilizado (primer argumento del programa). El número máximo de ciclos buscados (segundo argumento). Y el tiempo promedio (en 10 ejecuciones) que demoró su ejecución en dicha máquina. 
+
+Tabla de memoria: La tabla incluye el archivo de entrada utilizado (primer argumento del programa). El número máximo de ciclos buscados (segundo argumento). Y el tiempo máximo de memoria Ram usada en promedio (en 10 ejecuciones) en dicha máquina. 
+
+Tabla de composición de grafos: La tabla incluye el archivo de entrada utilizado (primer argumento del programa) y la cantidad de vertices y arcos del grafo de dependencia de paquetes resultante de dicho archivo. Estos valores son congruentes con las demoras y uso de memoria registradas en las otras tablas: a mayor numero de vertices y arcos los valores son mayores.
+
 Para encontrar los ciclos en un grafo incluimos dos estrategias distintas, cada una de las cuales será más o menos eficiente dependiendo de la configuración del grafo en el que buscar dependencias. Estos algoritmos son Johnson, y una búsqueda DFS con set blancos gris y negro para marcar los nodos al visitarlos
 
 Para grafos pequeños (menos de 50 arcos) No se aprecia una diferencia considerable en los tiempos de ejecución de ambos algoritmos.

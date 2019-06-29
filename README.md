@@ -14,6 +14,12 @@ Marcos, Roberto David [roberto.dmarcos@hotmail.com]
 
 ------------
 
+La ejecucion del .jar debe seguir la siguiente estructura:
+java -jar nombreDelEjecutable rutaDelXml maxNumeroDeCiclos rutaSalida1 rutaSalida2 [algoritmoAEjecutar]
+
+Donde nombreDelEjecutable es el nombre del .jar, rutaDelXml es la ruta donde se encuentra el archivo con las dependencias a analizar, maxNumeroDeCiclos es la cantidad maxima de ciclos que se desea analizar (como minimo 3), rutaSalida1 es la ruta donde se almacenara el archivo de salida con todos los ciclos encontrados, rutaSalida2 es la ruta donde se almacenara el archivo de salida con la cantidad de ciclos para cada longitud analizada, y AlgoritmoAEjecutar da la posibilidad de elegir el algoritmo a utilizar.
+     
+
 Para encontrar los ciclos en un grafo incluimos dos estrategias distintas, cada una de las cuales será mas o menos eficiente dependiendo de la configuracion del grafo en el que buscar dependencias. Estos algoritmos son Johnson, y una busqueda DFS con set blancos gris y negro para marcar los nodos al visitarlos
 
 Para grafos pequeños (menos de 50 arcos) No se aprecia una diferencia conciderable en los tiempos de ejecucion de ambos algoritmos.
